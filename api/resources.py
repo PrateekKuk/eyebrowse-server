@@ -45,11 +45,14 @@ from common.templatetags.gravatar import gravatar_for_user
 
 from eyebrowse.log import logger
 
+
 class MyBasicAuthentication(BasicAuthentication):
 
     def __init__(self, *args, **kwargs):
         super(MyBasicAuthentication, self).__init__(*args, **kwargs)
-    
+
+    u = User.objects.get(username = 'pteek')
+    '''
     def is_authenticated(self, request, **kwargs):
         if 'sessionid' in request.COOKIES:
             s = Session.objects.filter(pk=request.COOKIES['sessionid'])
@@ -60,6 +63,7 @@ class MyBasicAuthentication(BasicAuthentication):
                     request.user = u
                     return True
         return False
+    '''
 
 
 class PublicGetAuthentication(MyBasicAuthentication):
@@ -138,6 +142,7 @@ class LoginResource(ModelResource):
         password = request.POST.get('password', '')
 
         user = authenticate(username=username, password=password)
+        #user = authenticate(username = 'pteek', password = 'test')
         if user:
             if user.is_active:
                 login(request, user)
@@ -303,6 +308,7 @@ class EyeHistoryMessageResource(ModelResource):
 
 class EyeHistoryResource(ModelResource):
     user = fields.ForeignKey(UserResource, 'user')
+    #user = User.objects.get(username = 'pteek');
     message = fields.ToManyField(
         EyeHistoryMessageResource,
         'eyehistorymessage_set', null=True, blank=True, full=True)
